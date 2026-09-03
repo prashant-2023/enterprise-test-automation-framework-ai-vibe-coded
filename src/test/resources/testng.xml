@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="EnterpriseAutomationSuite" parallel="methods" thread-count="3" data-provider-thread-count="3">
+    <test name="LoginFlowTests" enabled="true">
+        <classes>
+            <class name="com.automation.framework.tests.LoginTest"/>
+           
+        </classes>
+    </test>
+    <test name="CreateContactTest" enabled="true">
+        <classes>
+             <class name="com.automation.framework.tests.CreateContactTest"/>
+        </classes>
+    </test>
+</suite>

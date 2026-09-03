@@ -1,0 +1,27 @@
+[
+  {
+    "testCaseName": "valid_login",
+    "username": "standard_user",
+    "password": "secret_sauce"
+  },
+  {
+    "testCaseName": "locked_out_user",
+    "username": "locked_out_user",
+    "password": "secret_sauce"
+  },
+  {
+    "testCaseName": "create_contact",
+    "firstName": "Prashant",
+    "lastName": "AutomationUser",
+    "middleName": "QA",
+    "category": "Customer",
+    "status": "Active",
+    "email": "prashant.automation.user@test.com",
+    "phoneNumber": "9876543210",
+    "streetAddress": "Connought Place Street",
+    "city": "Bengaluru",
+    "state": "Karnataka",
+    "postalCode": "560001",
+    "country": "India"
+  }
+]
