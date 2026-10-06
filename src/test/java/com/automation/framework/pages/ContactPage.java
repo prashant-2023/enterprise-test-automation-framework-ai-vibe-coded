@@ -1,6 +1,8 @@
 package com.automation.framework.pages;
 
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -26,9 +28,10 @@ public class ContactPage {
     private final By cityField = By.xpath("//input[@placeholder='City']");
     private final By stateField = By.xpath("//input[@placeholder='State / Province']");
     private final By postalCodeField = By.xpath("//input[@placeholder='Postal code']");
-    private final By countryDropdown = By.xpath("//div[contains(.,'Country') and .//select]//select");
+    private final By countryDropdown = By.xpath("//input[@placeholder='Postal code']/following-sibling::select");
     private final By saveButton = By.xpath("//button[normalize-space()='Save']");
     private final By successBanner = By.xpath("//*[contains(text(),'Contact created')]");
+   // private final By countRecord = By.xpath("//span[text()='35 records']");
 
     public ContactPage(WebDriver driver) {
         this.driver = driver;
@@ -70,9 +73,20 @@ public class ContactPage {
         fillIfPresent(stateField, state);
         fillIfPresent(postalCodeField, postalCode);
         selectIfPresent(countryDropdown, country);
+       //acceptAlertIfPresent();
         wait.until(ExpectedConditions.elementToBeClickable(saveButton)).click();
+       // wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//span[contains(text(), 'records')]"))));
     }
-
+/*
+    private void acceptAlertIfPresent() {
+        try {
+            Alert alert = driver.switchTo().alert();
+            alert.accept();
+        } catch (NoAlertPresentException ignored) {
+            // No alert is present; continue with the form submission.
+        }
+    }
+*/
     private void selectByVisibleText(By selector, String visibleText) {
         WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
         Select select = new Select(element);
@@ -112,16 +126,9 @@ public class ContactPage {
         }
     }
 
-    public boolean isContactCreated(String firstName, String lastName) {
-        String fullName = firstName + " " + lastName;
-        wait.until(ExpectedConditions.or(
-                ExpectedConditions.urlContains("/contacts/"),
-                ExpectedConditions.visibilityOfElementLocated(successBanner)
-        ));
-
-        boolean urlValid = driver.getCurrentUrl().contains("/contacts/");
-        boolean nameVisible = driver.getPageSource().contains(fullName);
-
-        return urlValid && (nameVisible || driver.findElements(successBanner).size() > 0);
+    public boolean isContactNameVisible(String firstName, String middleName, String lastName) {
+        String fullName = firstName + " " + middleName + " " + lastName;
+        By contactName = By.xpath("//*[normalize-space(.)='" + fullName + "']//h1");
+        return wait.until(ExpectedConditions.visibilityOfElementLocated(contactName)).isDisplayed();
     }
 }

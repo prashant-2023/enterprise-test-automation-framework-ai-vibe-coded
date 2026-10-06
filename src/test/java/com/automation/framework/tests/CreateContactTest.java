@@ -24,7 +24,7 @@ public class CreateContactTest extends BaseTest {
 
     @DataProvider(name = "createContactData")
     public Object[][] createContactDataProvider() throws IOException {
-        List<Map<String, String>> data = JsonDataUtil.readJsonData("src/test/resources/data/user-data.json");
+        List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
 
         for (Map<String, String> item : data) {
@@ -73,13 +73,13 @@ public class CreateContactTest extends BaseTest {
         contactPage.createContact(firstName, lastName, middleName, category, status, email, phoneNumber,
                 streetAddress, city, state, postalCode, country);
 
+        boolean nameVisible = contactPage.isContactNameVisible(firstName, middleName, lastName);
+        Assert.assertTrue(nameVisible,
+                "Created contact name should be visible after saving: " + firstName + " " + middleName + " " + lastName);
+
         String screenshotPath = com.automation.framework.utils.ScreenshotUtil.captureScreenshot(getDriver(), "contact_created");
         TestListener.attachScreenshot(screenshotPath);
         log.info("Contact creation screenshot captured: {}", screenshotPath);
-
-        boolean result = contactPage.isContactCreated(firstName, lastName);
-        Assert.assertTrue(result, "Contact should be created successfully and visible after saving");
-        TestListener.attachScreenshot(screenshotPath);
         log.info("Contact created successfully.");
     }
 }
