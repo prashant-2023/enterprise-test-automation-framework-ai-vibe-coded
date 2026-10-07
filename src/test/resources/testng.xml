@@ -6,9 +6,14 @@
            
         </classes>
     </test>
-    <test name="CreateContactTest" enabled="true">
+    <test name="CreateContactTest" enabled="false">
         <classes>
              <class name="com.automation.framework.tests.CreateContactTest"/>
+        </classes>
+    </test>
+    <test name="CreateCompanyTest" enabled="true">
+        <classes>
+            <class name="com.automation.framework.tests.CreateCompanyTest"/>
         </classes>
     </test>
 </suite>
