@@ -39,5 +39,19 @@
     "postalCode": "560001",
     "country": "India"
 
+  },
+  {
+    "testCaseName": "create_company",
+    "name": "Automation Test Company",
+    "website": "https://example.com",
+    "phone": "9876543210",
+    "email": "automation.company@test.com",
+    "description": "Company created by the automated test suite.",
+    "industry": "Technology",
+    "employees": "100",
+    "stockSymbol": "ATCO",
+    "annualRevenue": "1000000",
+    "status": "Active",
+    "source": "Web Service"
   }
 ]
