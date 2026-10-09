@@ -10,6 +10,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 
 public class ContactPage {
     private final WebDriver driver;
@@ -30,6 +31,16 @@ public class ContactPage {
     private final By postalCodeField = By.xpath("//input[@placeholder='Postal code']");
     private final By countryDropdown = By.xpath("//input[@placeholder='Postal code']/following-sibling::select");
     private final By saveButton = By.xpath("//button[normalize-space()='Save']");
+    private final By deleteButton = By.xpath(
+            "//*[self::button or self::a or @role='button'][" +
+                    "contains(translate(@aria-label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete') " +
+                    "or contains(translate(@title,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete') " +
+                    "or contains(translate(@data-tooltip,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete')]");
+    private final By deleteConfirmationButton = By.xpath(
+            "//*[@role='dialog']//button[normalize-space()='Delete' or normalize-space()='Confirm' or normalize-space()='Yes']" +
+                    " | //div[contains(@class,'modal')]//button[normalize-space()='Delete' or normalize-space()='Confirm' or normalize-space()='Yes']");
+    private final By deletionConfirmation = By.xpath(
+            "//*[contains(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'contact deleted')]");
     private final By successBanner = By.xpath("//*[contains(text(),'Contact created')]");
    // private final By countRecord = By.xpath("//span[text()='35 records']");
 
@@ -130,5 +141,36 @@ public class ContactPage {
         String fullName = firstName + " " + middleName + " " + lastName;
         By contactName = By.xpath("//*[normalize-space(.)='" + fullName + "']//h1");
         return wait.until(ExpectedConditions.visibilityOfElementLocated(contactName)).isDisplayed();
+    }
+
+    public boolean deleteContactAndVerify(String firstName, String middleName, String lastName) {
+        String fullName = firstName + " " + middleName + " " + lastName;
+        By contactName = By.xpath("//*[normalize-space(.)='" + fullName + "']//h1");
+        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        confirmDeletion();
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.visibilityOfElementLocated(deletionConfirmation),
+                ExpectedConditions.invisibilityOfElementLocated(contactName)
+        ));
+        return driver.findElements(contactName).stream().noneMatch(WebElement::isDisplayed);
+    }
+
+    private void confirmDeletion() {
+        wait.until(currentDriver -> {
+            try {
+                Alert alert = currentDriver.switchTo().alert();
+                alert.accept();
+                return true;
+            } catch (NoAlertPresentException ignored) {
+                List<WebElement> buttons = currentDriver.findElements(deleteConfirmationButton);
+                for (WebElement button : buttons) {
+                    if (button.isDisplayed() && button.isEnabled()) {
+                        button.click();
+                        return true;
+                    }
+                }
+                return !currentDriver.findElements(deletionConfirmation).isEmpty();
+            }
+        });
     }
 }

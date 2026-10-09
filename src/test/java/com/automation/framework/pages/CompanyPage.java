@@ -1,6 +1,9 @@
 package com.automation.framework.pages;
 
+import com.automation.framework.config.ConfigManager;
+import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
+import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -8,6 +11,7 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public class CompanyPage {
@@ -27,6 +31,16 @@ public class CompanyPage {
     private final By statusField = field("Status", "select");
     private final By sourceField = field("Source", "select");
     private final By saveButton = By.xpath("//button[normalize-space()='Save']");
+    private final By deleteButton = By.xpath(
+            "//*[self::button or self::a or @role='button'][" +
+                    "contains(translate(@aria-label,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete') " +
+                    "or contains(translate(@title,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete') " +
+                    "or contains(translate(@data-tooltip,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'delete')]");
+    private final By deleteConfirmationButton = By.xpath(
+            "//*[@role='dialog']//button[normalize-space()='Delete' or normalize-space()='Confirm' or normalize-space()='Yes']" +
+                    " | //div[contains(@class,'modal')]//button[normalize-space()='Delete' or normalize-space()='Confirm' or normalize-space()='Yes']");
+    private final By deletionConfirmation = By.xpath(
+            "//*[contains(translate(normalize-space(.),'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz'),'company deleted')]");
 
     public CompanyPage(WebDriver driver) {
         this.driver = driver;
@@ -34,7 +48,8 @@ public class CompanyPage {
     }
 
     public void openCompaniesPage() {
-        driver.get("https://ui.freecrm.com/companies");
+        String baseUrl = ConfigManager.getBaseUrl().replaceFirst("/login/?$", "");
+        driver.get(baseUrl + "/companies");
         wait.until(ExpectedConditions.visibilityOfElementLocated(createButton));
     }
 
@@ -59,6 +74,36 @@ public class CompanyPage {
     public boolean isCompanyNameVisible(String name) {
         By companyName = By.xpath("//*[normalize-space(text())=" + xpathLiteral(name) + "]");
         return wait.until(ExpectedConditions.visibilityOfElementLocated(companyName)).isDisplayed();
+    }
+
+    public boolean deleteCompanyAndVerify(String name) {
+        By companyName = By.xpath("//*[normalize-space(text())=" + xpathLiteral(name) + "]");
+        wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
+        confirmDeletion();
+        wait.until(ExpectedConditions.or(
+                ExpectedConditions.visibilityOfElementLocated(deletionConfirmation),
+                ExpectedConditions.invisibilityOfElementLocated(companyName)
+        ));
+        return driver.findElements(companyName).stream().noneMatch(WebElement::isDisplayed);
+    }
+
+    private void confirmDeletion() {
+        wait.until(currentDriver -> {
+            try {
+                Alert alert = currentDriver.switchTo().alert();
+                alert.accept();
+                return true;
+            } catch (NoAlertPresentException ignored) {
+                List<WebElement> buttons = currentDriver.findElements(deleteConfirmationButton);
+                for (WebElement button : buttons) {
+                    if (button.isDisplayed() && button.isEnabled()) {
+                        button.click();
+                        return true;
+                    }
+                }
+                return !currentDriver.findElements(deletionConfirmation).isEmpty();
+            }
+        });
     }
 
     private static By field(String label, String element, String... aliases) {

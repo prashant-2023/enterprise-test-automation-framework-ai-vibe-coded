@@ -11,14 +11,14 @@
   },
   {
     "testCaseName": "create_contact",
-    "firstName": "Aniket",
-    "lastName": "AutomationUser",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
     "middleName": "QA",
     "category": "Customer",
     "status": "Active",
-    "email": "aniket.automation.user@test.com",
+    "email": "linus.torvalds@linuxfoundation.org",
     "phoneNumber": "9876543210",
-    "streetAddress": "Connought Place Street",
+    "streetAddress": "SanFrancisco Street",
     "city": "Bengaluru",
     "state": "Karnataka",
     "postalCode": "560001",
@@ -26,14 +26,14 @@
   },
   {
     "testCaseName": "create_contact_invalid_email",
-    "firstName": "Aniket",
-    "lastName": "AutomationUser",
+    "firstName": "Linus",
+    "lastName": "Torvalds",
     "middleName": "QA",
     "category": "Customer",
     "status": "Active",
     "email": "aniket.automation.user@test",
     "phoneNumber": "9876543210",
-    "streetAddress": "Connought Place Street",
+    "streetAddress": "Connaught Place Street",
     "city": "Bengaluru",
     "state": "Karnataka",
     "postalCode": "560001",
@@ -42,7 +42,7 @@
   },
   {
     "testCaseName": "create_company",
-    "name": "Automation Test Company",
+    "name": "Open AI",
     "website": "https://example.com",
     "phone": "9876543210",
     "email": "automation.company@test.com",
@@ -53,5 +53,11 @@
     "annualRevenue": "1000000",
     "status": "Active",
     "source": "Web Service"
+  },
+  {
+    "testCaseName": "create_deal",
+    "name": "Automation Test Deal",
+    "amount": "25000",
+    "description": "Deal created by the automated test suite."
   }
 ]

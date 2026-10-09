@@ -11,9 +11,29 @@
              <class name="com.automation.framework.tests.CreateContactTest"/>
         </classes>
     </test>
-    <test name="CreateCompanyTest" enabled="true">
+    <test name="CreateCompanyTest" enabled="false">
         <classes>
             <class name="com.automation.framework.tests.CreateCompanyTest"/>
+        </classes>
+    </test>
+    <test name="DeleteContactTest" enabled="false">
+        <classes>
+            <class name="com.automation.framework.tests.DeleteContactTest"/>
+        </classes>
+    </test>
+    <test name="DeleteCompanyTest" enabled="true">
+        <classes>
+            <class name="com.automation.framework.tests.DeleteCompanyTest"/>
+        </classes>
+    </test>
+    <test name="CreateDealTest" enabled="false">
+        <classes>
+            <class name="com.automation.framework.tests.CreateDealTest"/>
+        </classes>
+    </test>
+    <test name="DeleteDealTest" enabled="false">
+        <classes>
+            <class name="com.automation.framework.tests.DeleteDealTest"/>
         </classes>
     </test>
 </suite>

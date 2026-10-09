@@ -34,6 +34,14 @@ public class ConfigManager {
         return get("baseUrl");
     }
 
+    public static String getScreenshotPath() {
+        String screenshotPath = get("screenshotPath");
+        if (screenshotPath == null || screenshotPath.trim().isEmpty()) {
+            throw new IllegalStateException("Missing or empty config property: screenshotPath");
+        }
+        return screenshotPath.trim();
+    }
+
     public static String getUsername() {
         return get("username");
     }

@@ -7,6 +7,7 @@ import com.automation.framework.utils.ScreenshotUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -28,6 +29,13 @@ public class BaseTest {
 
     protected WebDriver getDriver() {
         return DRIVER.get();
+    }
+
+    protected String captureScreenshot(String screenshotName) {
+        String screenshotPath = ScreenshotUtil.captureScreenshot(getDriver(), screenshotName);
+        TestListener.attachScreenshot(screenshotPath);
+        log.info("Screenshot captured: {}", screenshotPath);
+        return screenshotPath;
     }
 
     @BeforeMethod(alwaysRun = true)
@@ -83,8 +91,28 @@ public class BaseTest {
         WebDriver driver = getDriver();
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            String screenshotPath = ScreenshotUtil.captureScreenshot(driver, result.getName());
-            log.error("Test failed: {}. Screenshot captured at: {}", result.getName(), screenshotPath);
+            String currentUrl = "Unavailable";
+            if (driver != null) {
+                try {
+                    currentUrl = driver.getCurrentUrl();
+                } catch (WebDriverException e) {
+                    log.error("Unable to retrieve the current URL for failed test {}", result.getName(), e);
+                    TestListener.logArtifactCaptureFailure("Unable to retrieve current URL", e);
+                }
+            }
+
+            String screenshotPath = null;
+            if (driver != null) {
+                try {
+                    screenshotPath = ScreenshotUtil.captureScreenshot(driver, result.getName());
+                    log.info("Failure screenshot captured: {}", screenshotPath);
+                } catch (RuntimeException e) {
+                    log.error("Unable to capture failure screenshot for test {}", result.getName(), e);
+                    TestListener.logArtifactCaptureFailure("Unable to capture failure screenshot", e);
+                }
+            }
+            TestListener.addFailureArtifacts(currentUrl, screenshotPath, result.getThrowable());
+            log.error("Test failed: {}. Current URL: {}", result.getName(), currentUrl);
         }
 
         if (driver != null) {

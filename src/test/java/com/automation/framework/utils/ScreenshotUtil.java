@@ -1,6 +1,6 @@
 package com.automation.framework.utils;
 
-import org.apache.commons.io.FileUtils;
+import com.automation.framework.config.ConfigManager;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -9,23 +9,24 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.UUID;
 
 public final class ScreenshotUtil {
     private ScreenshotUtil() {}
 
     public static String captureScreenshot(WebDriver driver, String screenshotName) {
-        String folderPath = "target/screenshots";
+        Path screenshotDirectory = Path.of(ConfigManager.getScreenshotPath());
         try {
-            Files.createDirectories(Paths.get(folderPath));
+            Files.createDirectories(screenshotDirectory);
             File srcFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-            String fileName = screenshotName + "_" + timestamp + ".png";
-            String fullPath = folderPath + File.separator + fileName;
-            FileUtils.copyFile(srcFile, new File(fullPath));
-            return fullPath;
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
+            String safeName = screenshotName.replaceAll("[^a-zA-Z0-9._-]", "_");
+            Path screenshotFile = screenshotDirectory.resolve(
+                    safeName + "_" + timestamp + "_" + UUID.randomUUID() + ".png");
+            Files.copy(srcFile.toPath(), screenshotFile);
+            return screenshotFile.toString();
         } catch (IOException e) {
             throw new RuntimeException("Failed to capture screenshot", e);
         }

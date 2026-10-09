@@ -61,25 +61,29 @@ public class CreateContactTest extends BaseTest {
                                          String city, String state, String postalCode, String country) {
         log.info("Logging in to FreeCRM");
         LoginPage loginPage = new LoginPage(getDriver());
+        TestListener.logStep("Open the login page");
         loginPage.open();
+        TestListener.logStep("Log in with configured credentials");
         loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
         Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
 
         log.info("Navigating to Contacts page");
         ContactPage contactPage = new ContactPage(getDriver());
+        TestListener.logStep("Open the Contacts page");
         contactPage.openContactsPage();
 
         log.info("Creating a new contact with address details");
+        TestListener.logStep("Create the contact");
         contactPage.createContact(firstName, lastName, middleName, category, status, email, phoneNumber,
                 streetAddress, city, state, postalCode, country);
 
+        TestListener.logStep("Verify the created contact name");
         boolean nameVisible = contactPage.isContactNameVisible(firstName, middleName, lastName);
         Assert.assertTrue(nameVisible,
                 "Created contact name should be visible after saving: " + firstName + " " + middleName + " " + lastName);
 
-        String screenshotPath = com.automation.framework.utils.ScreenshotUtil.captureScreenshot(getDriver(), "contact_created");
-        TestListener.attachScreenshot(screenshotPath);
-        log.info("Contact creation screenshot captured: {}", screenshotPath);
+        TestListener.logStep("Capture a screenshot after contact creation is confirmed");
+        captureScreenshot("contact_created");
         log.info("Contact created successfully.");
     }
 }
