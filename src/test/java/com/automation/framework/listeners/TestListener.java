@@ -33,7 +33,9 @@ public class TestListener implements ITestListener {
                     "Name", "Website", "Phone", "Email", "Description", "Industry",
                     "Num. of Employees", "Stock Symbol", "Annual Revenue", "Status", "Source"),
             "createNewDealAndVerify", List.of("Name", "Amount", "Description"),
-            "createDeleteAndVerifyDeal", List.of("Name", "Amount", "Description")
+            "createDeleteAndVerifyDeal", List.of("Name", "Amount", "Description"),
+            "createNewTaskAndVerify", List.of(
+                    "Title", "Description", "Priority", "Status", "Company", "Contact")
     );
 
     public static void attachScreenshot(String imagePath) {

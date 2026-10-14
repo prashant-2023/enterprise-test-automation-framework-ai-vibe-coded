@@ -1,10 +1,8 @@
 package com.automation.framework.tests;
 
 import com.automation.framework.base.BaseTest;
-import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
 import com.automation.framework.pages.CompanyPage;
-import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.JsonDataUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DeleteCompanyTest extends BaseTest {
-    @DataProvider(name = "deleteCompanyData")
+    @DataProvider(name = "deleteCompanyData", parallel = true)
     public Object[][] deleteCompanyDataProvider() throws IOException {
         List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
@@ -30,9 +28,15 @@ public class DeleteCompanyTest extends BaseTest {
                 String email = item.get("email").replace("@", "+" + timestamp + "@");
 
                 rows.add(new Object[]{
-                        name, item.get("website"), item.get("phone"), email, item.get("description"),
-                        item.get("industry"), item.get("employees"), item.get("stockSymbol"),
-                        item.get("annualRevenue"), item.get("status"), item.get("source")
+                        name, item.get("website"),
+                        item.get("phone"), 
+                        email, item.get("description"),
+                        item.get("industry"), 
+                        item.get("employees"), 
+                        item.get("stockSymbol"),
+                        item.get("annualRevenue"), 
+                        item.get("status"), 
+                        item.get("source")
                 });
             }
         }
@@ -44,12 +48,12 @@ public class DeleteCompanyTest extends BaseTest {
     public void createDeleteAndVerifyCompany(String name, String website, String phone, String email,
                                              String description, String industry, String employees,
                                              String stockSymbol, String annualRevenue, String status, String source) {
-        LoginPage loginPage = new LoginPage(getDriver());
-        TestListener.logStep("Open the login page");
-        loginPage.open();
-        TestListener.logStep("Log in with configured credentials");
-        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful before company deletion");
+        // LoginPage loginPage = new LoginPage(getDriver());
+        // TestListener.logStep("Open the login page");
+        // loginPage.open();
+        // TestListener.logStep("Log in with configured credentials");
+        // loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        // Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful before company deletion");
 
         CompanyPage companyPage = new CompanyPage(getDriver());
         TestListener.logStep("Open the Companies page");

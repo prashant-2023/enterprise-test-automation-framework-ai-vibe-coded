@@ -1,10 +1,8 @@
 package com.automation.framework.tests;
 
 import com.automation.framework.base.BaseTest;
-import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
 import com.automation.framework.pages.DealPage;
-import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.JsonDataUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateDealTest extends BaseTest {
-    @DataProvider(name = "createDealData")
+    @DataProvider(name = "createDealData", parallel = true)
     public Object[][] createDealDataProvider() throws IOException {
         List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
@@ -38,12 +36,12 @@ public class CreateDealTest extends BaseTest {
 
     @Test(dataProvider = "createDealData")
     public void createNewDealAndVerify(String name, String amount, String description) {
-        LoginPage loginPage = new LoginPage(getDriver());
-        TestListener.logStep("Open the login page");
-        loginPage.open();
-        TestListener.logStep("Log in with configured credentials");
-        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
+        // LoginPage loginPage = new LoginPage(getDriver());
+        // TestListener.logStep("Open the login page");
+        // loginPage.open();
+        // TestListener.logStep("Log in with configured credentials");
+        // loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        // Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
 
         DealPage dealPage = new DealPage(getDriver());
         TestListener.logStep("Open the Deals page");

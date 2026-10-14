@@ -1,10 +1,8 @@
 package com.automation.framework.tests;
 
 import com.automation.framework.base.BaseTest;
-import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
 import com.automation.framework.pages.CompanyPage;
-import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.JsonDataUtil;
 import com.automation.framework.utils.LoggerUtil;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +20,7 @@ import java.util.Map;
 public class CreateCompanyTest extends BaseTest {
     private final Logger log = LoggerUtil.getLogger(CreateCompanyTest.class);
 
-    @DataProvider(name = "createCompanyData")
+    @DataProvider(name = "createCompanyData", parallel = true)
     public Object[][] createCompanyDataProvider() throws IOException {
         List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
@@ -56,13 +54,13 @@ public class CreateCompanyTest extends BaseTest {
     public void createNewCompanyAndVerify(String name, String website, String phone, String email,
                                           String description, String industry, String employees,
                                           String stockSymbol, String annualRevenue, String status, String source) {
-        log.info("Logging in to FreeCRM");
-        LoginPage loginPage = new LoginPage(getDriver());
-        TestListener.logStep("Open the login page");
-        loginPage.open();
-        TestListener.logStep("Log in with configured credentials");
-        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
+        // log.info("Logging in to FreeCRM");
+        // LoginPage loginPage = new LoginPage(getDriver());
+        // TestListener.logStep("Open the login page");
+        // loginPage.open();
+        // TestListener.logStep("Log in with configured credentials");
+        // loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        // Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
 
         CompanyPage companyPage = new CompanyPage(getDriver());
         TestListener.logStep("Open the Companies page");

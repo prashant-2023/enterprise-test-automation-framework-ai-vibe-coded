@@ -1,10 +1,8 @@
 package com.automation.framework.tests;
 
 import com.automation.framework.base.BaseTest;
-import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
 import com.automation.framework.pages.ContactPage;
-import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.JsonDataUtil;
 import org.testng.Assert;
 import org.testng.annotations.DataProvider;
@@ -18,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DeleteContactTest extends BaseTest {
-    @DataProvider(name = "deleteContactData")
+    @DataProvider(name = "deleteContactData", parallel = true)
     public Object[][] deleteContactDataProvider() throws IOException {
         List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
@@ -47,12 +45,12 @@ public class DeleteContactTest extends BaseTest {
     public void createDeleteAndVerifyContact(String firstName, String lastName, String middleName, String category,
                                              String status, String email, String phoneNumber, String streetAddress,
                                              String city, String state, String postalCode, String country) {
-        LoginPage loginPage = new LoginPage(getDriver());
-        TestListener.logStep("Open the login page");
-        loginPage.open();
-        TestListener.logStep("Log in with configured credentials");
-        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful before contact deletion");
+        // LoginPage loginPage = new LoginPage(getDriver());
+        // TestListener.logStep("Open the login page");
+        // loginPage.open();
+        // TestListener.logStep("Log in with configured credentials");
+        // loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        // Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful before contact deletion");
 
         ContactPage contactPage = new ContactPage(getDriver());
         TestListener.logStep("Open the Contacts page");

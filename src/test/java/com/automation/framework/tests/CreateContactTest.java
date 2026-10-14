@@ -1,10 +1,8 @@
 package com.automation.framework.tests;
 
 import com.automation.framework.base.BaseTest;
-import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
 import com.automation.framework.pages.ContactPage;
-import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.JsonDataUtil;
 import com.automation.framework.utils.LoggerUtil;
 import org.apache.logging.log4j.Logger;
@@ -22,7 +20,7 @@ import java.util.Map;
 public class CreateContactTest extends BaseTest {
     private final Logger log = LoggerUtil.getLogger(CreateContactTest.class);
 
-    @DataProvider(name = "createContactData")
+    @DataProvider(name = "createContactData", parallel = true)
     public Object[][] createContactDataProvider() throws IOException {
         List<Map<String, String>> data = JsonDataUtil.readJsonData();
         List<Object[]> rows = new ArrayList<>();
@@ -59,13 +57,13 @@ public class CreateContactTest extends BaseTest {
     public void createNewContactAndVerify(String firstName, String lastName, String middleName, String category,
                                          String status, String email, String phoneNumber, String streetAddress,
                                          String city, String state, String postalCode, String country) {
-        log.info("Logging in to FreeCRM");
-        LoginPage loginPage = new LoginPage(getDriver());
-        TestListener.logStep("Open the login page");
-        loginPage.open();
-        TestListener.logStep("Log in with configured credentials");
-        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
-        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
+        // log.info("Logging in to FreeCRM");
+        // LoginPage loginPage = new LoginPage(getDriver());
+        // TestListener.logStep("Open the login page");
+        // loginPage.open();
+        // TestListener.logStep("Log in with configured credentials");
+        // loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        // Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
 
         log.info("Navigating to Contacts page");
         ContactPage contactPage = new ContactPage(getDriver());

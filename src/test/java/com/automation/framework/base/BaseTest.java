@@ -2,6 +2,7 @@ package com.automation.framework.base;
 
 import com.automation.framework.config.ConfigManager;
 import com.automation.framework.listeners.TestListener;
+import com.automation.framework.pages.LoginPage;
 import com.automation.framework.utils.LoggerUtil;
 import com.automation.framework.utils.ScreenshotUtil;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -13,6 +14,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.testng.Assert;
 import org.testng.ITestResult;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.AfterMethod;
@@ -27,7 +29,7 @@ public class BaseTest {
     private static final ThreadLocal<WebDriver> DRIVER = new ThreadLocal<>();
     protected Logger log;
 
-    protected WebDriver getDriver() {
+    public WebDriver getDriver() {
         return DRIVER.get();
     }
 
@@ -46,7 +48,15 @@ public class BaseTest {
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(ConfigManager.getImplicitWait()));
         driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(ConfigManager.getPageLoadTimeout()));
         driver.manage().window().maximize();
+        //Login to the application
+        log.info("Logging in to FreeCRM");
+        LoginPage loginPage = new LoginPage(getDriver());
+        TestListener.logStep("Open the login page");
+        //loginPage.open();
         driver.get(ConfigManager.getBaseUrl());
+        TestListener.logStep("Log in with configured credentials");
+        loginPage.login(ConfigManager.getUsername(), ConfigManager.getDecodedPassword());
+        Assert.assertTrue(loginPage.isLoginSuccessful(), "Login should be successful");
         log.info("Application launched: {}", ConfigManager.getBaseUrl());
     }
 

@@ -1,5 +1,8 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="EnterpriseAutomationSuite" parallel="methods" thread-count="3" data-provider-thread-count="3">
+<suite name="EnterpriseAutomationSuite" parallel="tests" thread-count="3" data-provider-thread-count="3">
+    
+   
+    
     <test name="LoginFlowTests" enabled="false">
         <classes>
             <class name="com.automation.framework.tests.LoginTest"/>
@@ -12,8 +15,14 @@
         </classes>
     </test>
     <test name="CreateCompanyTest" enabled="false">
+        
         <classes>
             <class name="com.automation.framework.tests.CreateCompanyTest"/>
+        </classes>
+    </test>
+    <test name="CreateTaskTest" enabled="false">
+        <classes>
+            <class name="com.automation.framework.tests.CreateTaskTest"/>
         </classes>
     </test>
     <test name="DeleteContactTest" enabled="false">
@@ -21,7 +30,7 @@
             <class name="com.automation.framework.tests.DeleteContactTest"/>
         </classes>
     </test>
-    <test name="DeleteCompanyTest" enabled="true">
+    <test name="DeleteCompanyTest" enabled="false">
         <classes>
             <class name="com.automation.framework.tests.DeleteCompanyTest"/>
         </classes>
@@ -34,6 +43,11 @@
     <test name="DeleteDealTest" enabled="false">
         <classes>
             <class name="com.automation.framework.tests.DeleteDealTest"/>
+        </classes>
+    </test>
+    <test name="CreateTaskTest" enabled="false">
+        <classes>
+            <class name="com.automation.framework.tests.CreateTaskTest"/>
         </classes>
     </test>
 </suite>

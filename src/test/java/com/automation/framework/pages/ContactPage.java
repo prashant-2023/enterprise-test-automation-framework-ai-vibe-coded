@@ -1,12 +1,12 @@
 package com.automation.framework.pages;
 
+import com.automation.framework.utils.SeleniumFormUtil;
 import org.openqa.selenium.Alert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoAlertPresentException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.time.Duration;
@@ -58,32 +58,21 @@ public class ContactPage {
                              String email, String phoneNumber, String streetAddress, String city,
                              String state, String postalCode, String country) {
         wait.until(ExpectedConditions.elementToBeClickable(createButton)).click();
-        wait.until(ExpectedConditions.visibilityOfElementLocated(firstNameField)).clear();
-        driver.findElement(firstNameField).sendKeys(firstName);
+        SeleniumFormUtil.fillRequired(wait, firstNameField, firstName);
+        SeleniumFormUtil.fillRequired(wait, lastNameField, lastName);
+        SeleniumFormUtil.fillRequired(wait, middleNameField, middleName);
 
-        driver.findElement(lastNameField).clear();
-        driver.findElement(lastNameField).sendKeys(lastName);
+        SeleniumFormUtil.selectRequired(wait, categoryDropdown, category);
+        SeleniumFormUtil.selectRequired(wait, statusDropdown, status);
 
-        WebElement middleNameElement = driver.findElement(middleNameField);
-        middleNameElement.clear();
-        middleNameElement.sendKeys(middleName);
+        SeleniumFormUtil.fillRequired(wait, emailField, email);
+        SeleniumFormUtil.fillRequired(wait, phoneField, phoneNumber);
 
-        selectByVisibleText(categoryDropdown, category);
-        selectByVisibleText(statusDropdown, status);
-
-        WebElement emailElement = driver.findElement(emailField);
-        emailElement.clear();
-        emailElement.sendKeys(email);
-
-        WebElement phoneElement = driver.findElement(phoneField);
-        phoneElement.clear();
-        phoneElement.sendKeys(phoneNumber);
-
-        fillIfPresent(streetAddressField, streetAddress);
-        fillIfPresent(cityField, city);
-        fillIfPresent(stateField, state);
-        fillIfPresent(postalCodeField, postalCode);
-        selectIfPresent(countryDropdown, country);
+        SeleniumFormUtil.fillIfPresent(driver, wait, streetAddressField, streetAddress);
+        SeleniumFormUtil.fillIfPresent(driver, wait, cityField, city);
+        SeleniumFormUtil.fillIfPresent(driver, wait, stateField, state);
+        SeleniumFormUtil.fillIfPresent(driver, wait, postalCodeField, postalCode);
+        SeleniumFormUtil.selectIfPresent(driver, wait, countryDropdown, country);
        //acceptAlertIfPresent();
         wait.until(ExpectedConditions.elementToBeClickable(saveButton)).click();
        // wait.until(ExpectedConditions.visibilityOf(driver.findElement(By.xpath("//span[contains(text(), 'records')]"))));
@@ -98,54 +87,17 @@ public class ContactPage {
         }
     }
 */
-    private void selectByVisibleText(By selector, String visibleText) {
-        WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-        Select select = new Select(element);
-
-        for (WebElement option : select.getOptions()) {
-            String optionText = option.getText();
-            if (optionText.contains(visibleText)) {
-                select.selectByVisibleText(optionText);
-                return;
-            }
-        }
-
-        select.selectByVisibleText(visibleText);
-    }
-
-    private void fillIfPresent(By selector, String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return;
-        }
-
-        if (!driver.findElements(selector).isEmpty()) {
-            WebElement element = wait.until(ExpectedConditions.visibilityOfElementLocated(selector));
-            element.clear();
-            element.sendKeys(value);
-        }
-    }
-
-    private void selectIfPresent(By selector, String value) {
-        if (value == null || value.trim().isEmpty() || driver.findElements(selector).isEmpty()) {
-            return;
-        }
-
-        try {
-            selectByVisibleText(selector, value);
-        } catch (Exception e) {
-            // Some CRM versions render country options using a different label or without the field.
-        }
-    }
-
     public boolean isContactNameVisible(String firstName, String middleName, String lastName) {
         String fullName = firstName + " " + middleName + " " + lastName;
-        By contactName = By.xpath("//*[normalize-space(.)='" + fullName + "']//h1");
+        By contactName = By.xpath("//*[normalize-space(.)="
+                + SeleniumFormUtil.xpathLiteral(fullName) + "]//h1");
         return wait.until(ExpectedConditions.visibilityOfElementLocated(contactName)).isDisplayed();
     }
 
     public boolean deleteContactAndVerify(String firstName, String middleName, String lastName) {
         String fullName = firstName + " " + middleName + " " + lastName;
-        By contactName = By.xpath("//*[normalize-space(.)='" + fullName + "']//h1");
+        By contactName = By.xpath("//*[normalize-space(.)="
+                + SeleniumFormUtil.xpathLiteral(fullName) + "]//h1");
         wait.until(ExpectedConditions.elementToBeClickable(deleteButton)).click();
         confirmDeletion();
         wait.until(ExpectedConditions.or(

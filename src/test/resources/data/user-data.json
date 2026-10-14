@@ -59,5 +59,14 @@
     "name": "Automation Test Deal",
     "amount": "25000",
     "description": "Deal created by the automated test suite."
+  },
+  {
+    "testCaseName": "create_task",
+    "title": "Automation Test Task",
+    "description": "Task created by the automated test suite.",
+    "priority": "High",
+    "status": "Enquiring",
+    "company": "Open AI",
+    "contact": "Linus Torvalds"
   }
 ]
