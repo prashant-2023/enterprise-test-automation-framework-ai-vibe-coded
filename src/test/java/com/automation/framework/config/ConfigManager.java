@@ -34,6 +34,18 @@ public class ConfigManager {
         return get("baseUrl");
     }
 
+    public static boolean isRemote() {
+        return Boolean.parseBoolean(get("remote"));
+    }
+
+    public static String getRemoteUrl() {
+        String remoteUrl = get("remoteUrl");
+        if (remoteUrl == null || remoteUrl.trim().isEmpty()) {
+            throw new IllegalStateException("Missing or empty config property: remoteUrl");
+        }
+        return remoteUrl.trim();
+    }
+
     public static String getScreenshotPath() {
         String screenshotPath = get("screenshotPath");
         if (screenshotPath == null || screenshotPath.trim().isEmpty()) {

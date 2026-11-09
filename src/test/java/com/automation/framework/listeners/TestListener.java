@@ -13,12 +13,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class TestListener implements ITestListener {
     private static ExtentReports extent;
     private static final ThreadLocal<ExtentTest> currentTest = new ThreadLocal<>();
+    private static final ThreadLocal<List<String>> pendingSteps =
+            ThreadLocal.withInitial(ArrayList::new);
     private static final Map<String, List<String>> DATA_PARAMETER_LABELS = Map.of(
             "createNewContactAndVerify", List.of(
                     "First Name", "Last Name", "Middle Name", "Category", "Status", "Email",
@@ -64,6 +67,8 @@ public class TestListener implements ITestListener {
         ExtentTest test = currentTest.get();
         if (test != null) {
             test.info(step);
+        } else {
+            pendingSteps.get().add(step);
         }
     }
 
@@ -101,8 +106,7 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        ExtentTest test = extent.createTest(result.getMethod().getMethodName());
-        currentTest.set(test);
+        ExtentTest test = getOrCreateTest(result);
 
         Object[] parameters = result.getParameters();
         List<String> labels = DATA_PARAMETER_LABELS.get(result.getMethod().getMethodName());
@@ -117,26 +121,52 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        ExtentTest test = currentTest.get();
-        test.log(Status.PASS, "Test passed");
-        currentTest.remove();
+        try {
+            getOrCreateTest(result).log(Status.PASS, "Test passed");
+        } finally {
+            clearCurrentTest();
+        }
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        ExtentTest test = currentTest.get();
-        test.log(Status.FAIL, result.getThrowable());
+        try {
+            getOrCreateTest(result).log(Status.FAIL, result.getThrowable());
+        } finally {
+            clearCurrentTest();
+        }
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        ExtentTest test = currentTest.get();
-        test.log(Status.SKIP, "Test skipped");
-        currentTest.remove();
+        try {
+            getOrCreateTest(result).log(Status.SKIP, "Test skipped");
+        } finally {
+            clearCurrentTest();
+        }
     }
 
     @Override
     public void onFinish(ITestContext context) {
         extent.flush();
+    }
+
+    private static ExtentTest getOrCreateTest(ITestResult result) {
+        ExtentTest test = currentTest.get();
+        if (test == null) {
+            test = extent.createTest(result.getMethod().getMethodName());
+            currentTest.set(test);
+        }
+
+        for (String step : pendingSteps.get()) {
+            test.info(step);
+        }
+        pendingSteps.remove();
+        return test;
+    }
+
+    private static void clearCurrentTest() {
+        currentTest.remove();
+        pendingSteps.remove();
     }
 }

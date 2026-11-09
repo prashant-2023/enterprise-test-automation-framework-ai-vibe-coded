@@ -1,0 +1,65 @@
+services:
+  selenium-hub:
+    image: selenium/hub:4.25.0
+    container_name: selenium-hub
+    ports:
+      - "4442:4442"
+      - "4443:4443"
+      - "4444:4444"
+    healthcheck:
+      test: ["CMD", "curl", "-s", "http://localhost:4444/status"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+
+  chrome:
+    image: selenium/node-chrome:4.25.0
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1 # Enforces 1 test per container
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    shm_size: 2gb
+
+  firefox:
+    image: selenium/node-firefox:4.25.0
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+    environment:
+      - SE_EVENT_BUS_HOST=selenium-hub
+      - SE_EVENT_BUS_PUBLISH_PORT=4442
+      - SE_EVENT_BUS_SUBSCRIBE_PORT=4443
+      - SE_NODE_MAX_SESSIONS=1 # Enforces 1 test per container
+      - SE_NODE_OVERRIDE_MAX_SESSIONS=true
+    shm_size: 2gb
+
+  test-runner:
+    build:
+      context: .
+      dockerfile: DockerFile
+    depends_on:
+      selenium-hub:
+        condition: service_healthy
+      chrome:
+        condition: service_started
+      firefox:
+        condition: service_started
+    command:
+      - sh
+      - -c
+      - >-
+        sed -i 's|^remoteUrl=.*|remoteUrl=http://selenium-hub:4444|' src/test/resources/config/config.properties
+        && mvn clean test;
+        test_status=$$?;
+        mkdir -p /artifacts && cp -R target/. /artifacts/;
+        artifact_status=$$?;
+        if [ "$$artifact_status" -ne 0 ]; then exit "$$artifact_status"; fi;
+        exit "$$test_status"
+    volumes:
+      - ./target:/artifacts

@@ -1,20 +1,41 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-<suite name="EnterpriseAutomationSuite" parallel="tests" thread-count="3" data-provider-thread-count="3">
+<suite name="EnterpriseAutomationSuite" parallel="tests" thread-count="3" data-provider-thread-count="2">
+
+    <test name="Chrome Tests" enabled="true">
+    <parameter name = "browser" value = "chrome"/>
+        <classes>
+        <class name="com.automation.framework.tests.LoginTest"/>
+           <class name="com.automation.framework.tests.CreateContactTest"/>
+           <class name="com.automation.framework.tests.CreateCompanyTest"/>
+           <!-- <class name="com.automation.framework.tests.CreateTaskTest"/> -->
+        </classes>
+    </test>
     
+    <test name="Firefox Tests" enabled="true">
+    <parameter name = "browser" value = "firefox"/>
+        <classes>
+        <class name="com.automation.framework.tests.DeleteContactTest"/>
+        <class name="com.automation.framework.tests.DeleteCompanyTest"/>
+        <class name="com.automation.framework.tests.CreateDealTest"/>
+        <class name="com.automation.framework.tests.DeleteDealTest"/>
+        </classes>
+    </test>
+
+
    
-    
-    <test name="LoginFlowTests" enabled="false">
+<!--     
+    <test name="LoginFlowTests" enabled="true">
         <classes>
             <class name="com.automation.framework.tests.LoginTest"/>
            
         </classes>
     </test>
-    <test name="CreateContactTest" enabled="false">
+    <test name="CreateContactTest" enabled="true">
         <classes>
              <class name="com.automation.framework.tests.CreateContactTest"/>
         </classes>
     </test>
-    <test name="CreateCompanyTest" enabled="false">
+    <test name="CreateCompanyTest" enabled="true">
         
         <classes>
             <class name="com.automation.framework.tests.CreateCompanyTest"/>
@@ -25,29 +46,25 @@
             <class name="com.automation.framework.tests.CreateTaskTest"/>
         </classes>
     </test>
-    <test name="DeleteContactTest" enabled="false">
+    <test name="DeleteContactTest" enabled="true">
         <classes>
             <class name="com.automation.framework.tests.DeleteContactTest"/>
         </classes>
     </test>
-    <test name="DeleteCompanyTest" enabled="false">
+    <test name="DeleteCompanyTest" enabled="true">
         <classes>
             <class name="com.automation.framework.tests.DeleteCompanyTest"/>
         </classes>
     </test>
-    <test name="CreateDealTest" enabled="false">
+    <test name="CreateDealTest" enabled="true">
         <classes>
             <class name="com.automation.framework.tests.CreateDealTest"/>
         </classes>
     </test>
-    <test name="DeleteDealTest" enabled="false">
+    <test name="DeleteDealTest" enabled="true">
         <classes>
             <class name="com.automation.framework.tests.DeleteDealTest"/>
         </classes>
-    </test>
-    <test name="CreateTaskTest" enabled="false">
-        <classes>
-            <class name="com.automation.framework.tests.CreateTaskTest"/>
-        </classes>
-    </test>
+    </test> -->
+    
 </suite>
